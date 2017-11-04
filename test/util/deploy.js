@@ -1,13 +1,13 @@
 let Treasury = artifacts.require('Treasury');
-//let TestToken = artifacts.require('TestToken');
+let TestToken = artifacts.require('TestToken');
 
 
 async function deployTestContracts(accounts) {
     let treasuryContract = await Treasury.new();
-    //let tokenContract = await TestToken.new(treasuryContract.address);
+    let tokenContract = await TestToken.new();
     return {
         treasuryContract: treasuryContract,
-        //tokenContract: tokenContract,
+        tokenContract: tokenContract,
     }
 }
 
