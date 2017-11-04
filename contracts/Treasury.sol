@@ -17,7 +17,7 @@ contract Treasury is Ownable {
 
     event Exchange(address _who, uint256 _tokenAmount, uint256 _weiAmount);
 
-    function Treasury() {
+    function Treasury() public {
     }
 
     function() public payable {
@@ -36,13 +36,13 @@ contract Treasury is Ownable {
         tokenRateWei = _rate;
     }
 
-    function getEtherBalance() public returns (uint256) {
+    function getEtherBalance() public view returns (uint256) {
         return this.balance;
     }
 
     // This method is called by token contract
     // when the person submites tokens in excahge of ether
-    function tokenDepositEvent(address _person, uint256 _tokenAmount) {
+    function tokenDepositEvent(address _person, uint256 _tokenAmount) public {
         require(msg.sender == tokenAddress);
         uint256 weiAmount = _tokenAmount.div(10**tokenDecimals).mul(tokenRateWei);
         require(this.balance >= weiAmount);
