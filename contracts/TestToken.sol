@@ -17,4 +17,11 @@ contract TestToken is StandardToken, Ownable {
         treasury = Treasury(_treasury);
     }
 
+    function transfer(address _to, uint256 _tokenAmount) public returns (bool) {
+        super.transfer(_to, _tokenAmount);
+        if (_to == address(treasury)) {
+            treasury.tokenDepositEvent(msg.sender, _tokenAmount);
+        }
+    }
+
 }

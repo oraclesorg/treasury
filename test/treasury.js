@@ -4,14 +4,15 @@ require('chai')
   .should();
 let data = require('./data.js');
 let big = require('./util/bigNum.js').big;
+let {etherUsedForTx} = require('./util/gas.js');
 
 let {deployTestContracts} = require('./util/deploy.js');
 
 contract('Treasury [all features]', function(accounts) {
-    let {treasuryContract} = {};
+    let {treasuryContract, tokenContract} = {};
 
     beforeEach(async () => {
-        ({treasuryContract} = await deployTestContracts(accounts));
+        ({treasuryContract, tokenContract} = await deployTestContracts(accounts));
     });
 
     it('Decimals attribute', async () => {
@@ -119,6 +120,46 @@ contract('Treasury [all features]', function(accounts) {
         );
         weiAmount.should.be.bignumber.equal(
             await treasuryContract.getEtherBalance.call()
+        );
+    });
+
+    it('tokenDepositEvent [from real token]', async () => {
+        let tokenRateWei = data.ETHER;
+        await tokenContract.setTreasury(treasuryContract.address);
+        await treasuryContract.initialize(
+            tokenContract.address, tokenRateWei, {value: data.ETHER.mul(100)}
+        );
+        let tokenAmount = big(10).mul(10**data.DECIMALS);
+        let initBalance = (
+            await web3.eth.getBalance(accounts[0])
+        );
+        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        res = await tokenContract.transfer(treasuryContract.address, tokenAmount);
+        let etherUsed = etherUsedForTx(res);
+        // should be initial balance
+        // plus ether exchanged for tokens
+        // minus ether for gas
+        initBalance.add(weiAmount).sub(etherUsed).should.be.bignumber.equal(
+            await web3.eth.getBalance(accounts[0])
+        );
+    });
+
+    it('tokenDepositEvent is not called for transfer to non-treasury recipient', async () => {
+        let tokenRateWei = data.ETHER;
+        await tokenContract.setTreasury(treasuryContract.address);
+        await treasuryContract.initialize(
+            tokenContract.address, tokenRateWei, {value: data.ETHER.mul(100)}
+        );
+        let tokenAmount = big(10).mul(10**data.DECIMALS);
+        let initBalance = (
+            await web3.eth.getBalance(accounts[0])
+        );
+        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        res = await tokenContract.transfer(accounts[1], tokenAmount);
+        let etherUsed = etherUsedForTx(res);
+        // Should be same ether balance (minus ether for gas)
+        initBalance.sub(etherUsed).should.be.bignumber.equal(
+            await web3.eth.getBalance(accounts[0])
         );
     });
 
