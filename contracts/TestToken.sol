@@ -7,8 +7,8 @@ import './Treasury.sol';
 contract TestToken is StandardToken, Ownable {
     Treasury public treasury = Treasury(0x0);
 
-    function TestToken() public {
-        totalSupply = 100 * (10**18);
+    function TestToken(uint _hardCap, uint _decimals) public {
+        totalSupply = _hardCap * (10**_decimals);
         balances[msg.sender] = totalSupply; 
     }
 
