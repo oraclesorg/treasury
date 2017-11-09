@@ -1,14 +1,20 @@
 pragma solidity 0.4.18;
+
 import "zeppelin-solidity/contracts/token/StandardToken.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./Treasury.sol";
 
 
 contract TestToken is StandardToken, Ownable {
-    Treasury public treasury = Treasury(0x0);
+    using SafeMath for uint256;
 
-    function TestToken(uint _hardCap, uint _decimals) public {
-        totalSupply = _hardCap * (10**_decimals);
+    Treasury public treasury = Treasury(0x0);
+    uint256 public decimals = 0;
+
+    function TestToken(uint256 _totalSupplyItems, uint256 _decimals) public {
+        decimals = _decimals;
+        totalSupply = _totalSupplyItems.mul(10**_decimals);
         balances[msg.sender] = totalSupply; 
     }
 

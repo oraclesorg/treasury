@@ -4,14 +4,30 @@ require('chai')
   .should();
 let data = require('./data.js');
 let big = require('./util/bigNum.js').big;
-
+let TestToken = artifacts.require('TestToken');
 let {deployTestContracts} = require('./util/deploy.js');
 
-contract('Treasury [all features]', function(accounts) {
+contract('TestToken [all features]', function(accounts) {
     let {tokenContract} = {};
 
     beforeEach(async () => {
         ({tokenContract, treasuryContract} = await deployTestContracts(accounts));
+    });
+
+    it('constructor arguments set totalSupply', async () => {
+        let token = await TestToken.new(100, 2);
+        10000..should.be.bignumber.equal(await token.totalSupply());
+    });
+
+    it('decimals constructor argument', async () => {
+        let token = await TestToken.new(100, 2);
+        2..should.be.bignumber.equal(await token.decimals());
+    });
+
+    it('totalSupply', async() => {
+        data.TOTAL_SUPPLY_ITEMS.mul(10**data.DECIMALS).should.be.bignumber.equal(
+            await tokenContract.totalSupply()
+        );
     });
 
     it('setTreasury fails for non-owner', async () => {
