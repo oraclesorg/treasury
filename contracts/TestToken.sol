@@ -1,7 +1,7 @@
-pragma solidity ^0.4.15;
-import 'zeppelin-solidity/contracts/token/StandardToken.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
-import './Treasury.sol';
+pragma solidity 0.4.18;
+import "zeppelin-solidity/contracts/token/StandardToken.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./Treasury.sol";
 
 
 contract TestToken is StandardToken, Ownable {

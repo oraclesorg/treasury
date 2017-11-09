@@ -1,7 +1,8 @@
-pragma solidity ^0.4.15;
+pragma solidity 0.4.18;
 
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
-import 'zeppelin-solidity/contracts/math/SafeMath.sol';
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+
 
 contract Treasury is Ownable {
     using SafeMath for uint256;
@@ -16,9 +17,9 @@ contract Treasury is Ownable {
     uint256 public tokenDecimals = 18;
 
     event Exchange(address _who, uint256 _tokenAmount, uint256 _weiAmount);
-
-    function Treasury() public {
-    }
+    //
+    //function Treasury() public {
+    //}
 
     function() public payable {
         revert();
