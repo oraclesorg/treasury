@@ -15,3 +15,6 @@ testrpc:
 
 test:
 	truffle test
+
+solhint:
+	solhint contracts/*.sol
