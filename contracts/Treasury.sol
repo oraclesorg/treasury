@@ -45,7 +45,7 @@ contract Treasury is Ownable {
     // when the person submites tokens in excahge of ether
     function tokenDepositEvent(address _person, uint256 _tokenAmount) public {
         require(msg.sender == tokenAddress);
-        uint256 weiAmount = _tokenAmount.div(10**tokenDecimals).mul(tokenRateWei);
+        uint256 weiAmount = _tokenAmount.mul(tokenRateWei);
         require(this.balance >= weiAmount);
         _person.transfer(weiAmount);
         Exchange(_person, _tokenAmount, weiAmount);
