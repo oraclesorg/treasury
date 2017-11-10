@@ -62,11 +62,11 @@ contract('Treasury [all features]', function(accounts) {
         await treasuryContract.initialize(
             accounts[0], tokenRateWei, {value: data.ETHER.mul(100)}
         );
-        let tokenAmount = big(10).mul(10**data.DECIMALS);
+        let tokenAmount = big(10);
         let initBalance = (
             await web3.eth.getBalance(accounts[1])
         );
-        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        let weiAmount = tokenAmount.mul(tokenRateWei);
         await treasuryContract.tokenDepositEvent(
             accounts[1], tokenAmount, {from: accounts[0]}
         );
@@ -91,11 +91,11 @@ contract('Treasury [all features]', function(accounts) {
         await treasuryContract.initialize(
             accounts[0], tokenRateWei, {value: data.ETHER.mul(100)}
         );
-        let tokenAmount = big(10).mul(10**data.DECIMALS);
+        let tokenAmount = big(10);
         let initBalance = (
             await web3.eth.getBalance(accounts[1])
         );
-        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        let weiAmount = tokenAmount.mul(tokenRateWei);
         let res = await treasuryContract.tokenDepositEvent(
             accounts[1], tokenAmount, {from: accounts[0]}
         );
@@ -129,11 +129,11 @@ contract('Treasury [all features]', function(accounts) {
         await treasuryContract.initialize(
             tokenContract.address, tokenRateWei, {value: data.ETHER.mul(100)}
         );
-        let tokenAmount = big(10).mul(10**data.DECIMALS);
+        let tokenAmount = big(10);
         let initBalance = (
             await web3.eth.getBalance(accounts[0])
         );
-        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        let weiAmount = tokenAmount.mul(tokenRateWei);
         res = await tokenContract.transfer(treasuryContract.address, tokenAmount);
         let etherUsed = etherUsedForTx(res);
         // should be initial balance
@@ -154,7 +154,7 @@ contract('Treasury [all features]', function(accounts) {
         let initBalance = (
             await web3.eth.getBalance(accounts[0])
         );
-        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        let weiAmount = tokenAmount.mul(10**data.DECIMALS).mul(tokenRateWei);
         res = await tokenContract.transfer(accounts[1], tokenAmount);
         let etherUsed = etherUsedForTx(res);
         // Should be same ether balance (minus ether for gas)
