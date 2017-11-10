@@ -8,7 +8,7 @@ let TestToken = artifacts.require('TestToken');
 let {deployTestContracts} = require('./util/deploy.js');
 
 contract('TestToken [all features]', function(accounts) {
-    let {tokenContract} = {};
+    let {tokenContract, treasuryContract} = {};
 
     beforeEach(async () => {
         ({tokenContract, treasuryContract} = await deployTestContracts(accounts));
@@ -45,6 +45,32 @@ contract('TestToken [all features]', function(accounts) {
         );
     });
 
+    it('transfer fails if treasury is not set', async () => {
+        await tokenContract.transfer(accounts[1], 100)
+            .should.be.rejectedWith('invalid opcode');
+    });
+
+    it('transferFrom fails if treasury is not set', async () => {
+        await tokenContract.approve(accounts[1], 100);
+        await tokenContract.transferFrom(accounts[0], accounts[2], 100, {from: accounts[1]})
+            .should.be.rejectedWith('invalid opcode');
+    });
+
+    it('transfer works if treasury is set', async () => {
+        await tokenContract.setTreasury(treasuryContract.address);
+        await tokenContract.transfer(accounts[1], 100);
+        100..should.be.bignumber.equal(
+            await tokenContract.balanceOf(accounts[1])
+        );
+    });
+
+    it('transferFrom works if treasury is set', async () => {
+        await tokenContract.setTreasury(treasuryContract.address);
+        await tokenContract.approve(accounts[1], 100);
+        await tokenContract.transferFrom(accounts[0], accounts[2], 100, {from: accounts[1]});
+        100..should.be.bignumber.equal(
+            await tokenContract.balanceOf(accounts[2])
+        );
+    });
+
 });
-
-

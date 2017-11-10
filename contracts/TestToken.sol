@@ -23,11 +23,23 @@ contract TestToken is StandardToken, Ownable {
         treasury = Treasury(_treasury);
     }
 
-    function transfer(address _to, uint256 _tokenAmount) public returns (bool) {
+    modifier treasuryIsSet() {
+        require(address(treasury) != 0x0);
+        _;
+    }
+
+    function transfer(address _to, uint256 _tokenAmount) public treasuryIsSet returns (bool) {
         super.transfer(_to, _tokenAmount);
         if (_to == address(treasury)) {
             treasury.tokenDepositEvent(msg.sender, _tokenAmount);
         }
     }
 
+    function transferFrom(address _from, address _to, uint256 _value) public treasuryIsSet returns (bool) {
+        super.transferFrom(_from, _to, _value);
+        if (_to == address(treasury)) {
+            // TODO FIXME
+            //treasury.tokenDepositEvent(msg.sender, _tokenAmount);
+        }
+    }
 }
