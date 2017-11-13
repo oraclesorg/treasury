@@ -77,4 +77,20 @@ contract('OraclesToken', function(accounts) {
         );
     });
 
+    it('isTransferAllowed', async () => {
+        true.should.be.equal(
+            await tokenContract.isTransferAllowed.call({from: bridgeAddress})
+        );
+        false.should.be.equal(
+            await tokenContract.isTransferAllowed.call()
+        );
+        await tokenContract.setTreasury(treasuryContract.address);
+        true.should.be.equal(
+            await tokenContract.isTransferAllowed.call({from: bridgeAddress})
+        );
+        true.should.be.equal(
+            await tokenContract.isTransferAllowed.call()
+        );
+    });
+
 });

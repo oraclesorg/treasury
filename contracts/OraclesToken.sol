@@ -30,8 +30,15 @@ contract OraclesToken is StandardToken, Ownable {
         return address(treasury) != 0x0;
     }
 
+    function isTransferAllowed() public returns (bool) {
+        return (
+            (msg.sender == bridgeAddress)
+            || treasuryIsSet()
+        );
+    }
+
     function transfer(address _to, uint256 _tokenAmount) public returns (bool) {
-        require(treasuryIsSet());
+        require(isTransferAllowed());
         super.transfer(_to, _tokenAmount);
         if (_to == address(treasury)) {
             treasury.tokenDepositEvent(msg.sender, _tokenAmount);
@@ -39,7 +46,7 @@ contract OraclesToken is StandardToken, Ownable {
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-        require(treasuryIsSet());
+        require(isTransferAllowed());
         super.transferFrom(_from, _to, _value);
         if (_to == address(treasury)) {
             // TODO FIXME
