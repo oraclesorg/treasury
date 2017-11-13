@@ -32,7 +32,7 @@ contract('OraclesToken', function(accounts) {
 
     it('setTreasury fails for non-owner', async () => {
         await tokenContract.setTreasury(treasuryContract.address, {from: accounts[1]})
-            .should.be.rejectedWith('invalid opcode');
+            .should.be.rejectedWith(': revert');
     });
 
     it('setTreasury sets treasury contract', async () => {
@@ -49,7 +49,7 @@ contract('OraclesToken', function(accounts) {
         // put some tokens on common accounts[0] balance using bridge account
         await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
         await tokenContract.transfer(accounts[1], 100)
-            .should.be.rejectedWith('invalid opcode');
+            .should.be.rejectedWith(': revert');
     });
 
     it('transferFrom fails if treasury is not set', async () => {
@@ -57,7 +57,7 @@ contract('OraclesToken', function(accounts) {
         // put some tokens on common accounts[0] balance using bridge account
         await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
         await tokenContract.transferFrom(accounts[0], accounts[2], 100, {from: accounts[1]})
-            .should.be.rejectedWith('invalid opcode');
+            .should.be.rejectedWith(': revert');
     });
 
     it('transfer works if treasury is set', async () => {

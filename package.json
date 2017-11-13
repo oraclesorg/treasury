@@ -14,7 +14,7 @@
     "zeppelin-solidity": "latest",
     "moment": "latest",
     "truffle": "latest",
-    "ethereumjs-testrpc": "4.1.3"
+    "ethereumjs-testrpc": "latest"
   },
   "devDependencies": {},
   "scripts": {

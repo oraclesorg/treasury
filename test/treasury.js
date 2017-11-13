@@ -54,7 +54,7 @@ contract('Treasury', function(accounts) {
         );
         await treasuryContract.initialize(
                 accounts[0], data.ETHER, {value: data.ETHER.mul(100)}
-            ).should.be.rejectedWith('invalid opcode');
+            ).should.be.rejectedWith(': revert');
     });
 
     it('tokenDepositEvent', async () => {
@@ -83,7 +83,7 @@ contract('Treasury', function(accounts) {
         let tokenAmount = big(10).mul(10**data.DECIMALS);
         await treasuryContract.tokenDepositEvent(
                 accounts[1], tokenAmount, {from: accounts[1]})
-            .should.be.rejectedWith('invalid opcode');
+            .should.be.rejectedWith(': revert');
     });
 
     it('tokenDepositEvent generates Exchange event', async () => {
