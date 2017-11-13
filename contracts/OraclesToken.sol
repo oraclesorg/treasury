@@ -26,11 +26,11 @@ contract OraclesToken is StandardToken, Ownable {
         treasury = Treasury(_treasury);
     }
 
-    function treasuryIsSet() public returns (bool) {
+    function treasuryIsSet() public view returns (bool) {
         return address(treasury) != 0x0;
     }
 
-    function isTransferAllowed() public returns (bool) {
+    function isTransferAllowed() public view returns (bool) {
         return (
             (msg.sender == bridgeAddress)
             || treasuryIsSet()
