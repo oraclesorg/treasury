@@ -46,12 +46,16 @@ contract('OraclesToken', function(accounts) {
     });
 
     it('transfer fails if treasury is not set', async () => {
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
         await tokenContract.transfer(accounts[1], 100)
             .should.be.rejectedWith('invalid opcode');
     });
 
     it('transferFrom fails if treasury is not set', async () => {
         await tokenContract.approve(accounts[1], 100);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
         await tokenContract.transferFrom(accounts[0], accounts[2], 100, {from: accounts[1]})
             .should.be.rejectedWith('invalid opcode');
     });
@@ -77,6 +81,20 @@ contract('OraclesToken', function(accounts) {
         );
     });
 
+    it('transfer works if treasury is NOT set and msg.sender is bridge', async () => {
+        await tokenContract.transfer(accounts[1], 100, {from: bridgeAddress});
+        100..should.be.bignumber.equal(
+            await tokenContract.balanceOf(accounts[1])
+        );
+    });
+
+    it('transferFrom works if treasury is NOT set and msg.sender is bridge', async () => {
+        await tokenContract.approve(bridgeAddress, 100);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
+        await tokenContract.transferFrom(accounts[0], accounts[2], 100, {from: bridgeAddress});
+    });
+
     it('isTransferAllowed', async () => {
         true.should.be.equal(
             await tokenContract.isTransferAllowed.call({from: bridgeAddress})
@@ -92,5 +110,4 @@ contract('OraclesToken', function(accounts) {
             await tokenContract.isTransferAllowed.call()
         );
     });
-
 });

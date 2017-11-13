@@ -48,9 +48,7 @@ contract OraclesToken is StandardToken, Ownable {
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
         require(isTransferAllowed());
         super.transferFrom(_from, _to, _value);
-        if (_to == address(treasury)) {
-            // TODO FIXME
-            //treasury.tokenDepositEvent(msg.sender, _tokenAmount);
-        }
+        // TODO FIXME
+        // call treasury.tokenDepositEvent
     }
 }
