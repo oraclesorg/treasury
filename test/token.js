@@ -4,23 +4,23 @@ require('chai')
   .should();
 let data = require('./data.js');
 let big = require('./util/bigNum.js').big;
-let TestToken = artifacts.require('TestToken');
+let OraclesToken = artifacts.require('OraclesToken');
 let {deployTestContracts} = require('./util/deploy.js');
 
-contract('TestToken [all features]', function(accounts) {
-    let {tokenContract, treasuryContract} = {};
+contract('OraclesToken', function(accounts) {
+    let {bridgeAddress, tokenContract, treasuryContract} = {};
 
     beforeEach(async () => {
-        ({tokenContract, treasuryContract} = await deployTestContracts(accounts));
+        ({bridgeAddress, tokenContract, treasuryContract} = await deployTestContracts(accounts));
     });
 
     it('constructor arguments set totalSupply', async () => {
-        let token = await TestToken.new(100, 2);
+        let token = await OraclesToken.new(accounts[0], 100, 2);
         10000..should.be.bignumber.equal(await token.totalSupply());
     });
 
     it('decimals constructor argument', async () => {
-        let token = await TestToken.new(100, 2);
+        let token = await OraclesToken.new(accounts[0], 100, 2);
         2..should.be.bignumber.equal(await token.decimals());
     });
 
@@ -58,6 +58,8 @@ contract('TestToken [all features]', function(accounts) {
 
     it('transfer works if treasury is set', async () => {
         await tokenContract.setTreasury(treasuryContract.address);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
         await tokenContract.transfer(accounts[1], 100);
         100..should.be.bignumber.equal(
             await tokenContract.balanceOf(accounts[1])
@@ -66,6 +68,8 @@ contract('TestToken [all features]', function(accounts) {
 
     it('transferFrom works if treasury is set', async () => {
         await tokenContract.setTreasury(treasuryContract.address);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
         await tokenContract.approve(accounts[1], 100);
         await tokenContract.transferFrom(accounts[0], accounts[2], 100, {from: accounts[1]});
         100..should.be.bignumber.equal(

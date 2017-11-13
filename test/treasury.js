@@ -8,11 +8,11 @@ let {etherUsedForTx} = require('./util/gas.js');
 
 let {deployTestContracts} = require('./util/deploy.js');
 
-contract('Treasury [all features]', function(accounts) {
-    let {treasuryContract, tokenContract} = {};
+contract('Treasury', function(accounts) {
+    let {bridgeAddress, treasuryContract, tokenContract} = {};
 
     beforeEach(async () => {
-        ({treasuryContract, tokenContract} = await deployTestContracts(accounts));
+        ({bridgeAddress, treasuryContract, tokenContract} = await deployTestContracts(accounts));
     });
 
     it('Decimals attribute', async () => {
@@ -134,6 +134,8 @@ contract('Treasury [all features]', function(accounts) {
             await web3.eth.getBalance(accounts[0])
         );
         let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], tokenAmount, {from: bridgeAddress});
         res = await tokenContract.transfer(treasuryContract.address, tokenAmount);
         let etherUsed = etherUsedForTx(res);
         // should be initial balance
@@ -155,6 +157,8 @@ contract('Treasury [all features]', function(accounts) {
             await web3.eth.getBalance(accounts[0])
         );
         let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], tokenAmount, {from: bridgeAddress});
         res = await tokenContract.transfer(accounts[1], tokenAmount);
         let etherUsed = etherUsedForTx(res);
         // Should be same ether balance (minus ether for gas)

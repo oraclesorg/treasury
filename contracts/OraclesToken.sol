@@ -11,11 +11,14 @@ contract OraclesToken is StandardToken, Ownable {
 
     Treasury public treasury = Treasury(0x0);
     uint256 public decimals = 0;
+    address public bridgeAddress = 0x0;
 
-    function OraclesToken(uint256 _totalSupplyItems, uint256 _decimals) public {
+    function OraclesToken(address _bridgeAddress, uint256 _totalSupplyItems, uint256 _decimals) public {
+        require(_bridgeAddress != 0x0);
+        bridgeAddress = _bridgeAddress;
         decimals = _decimals;
         totalSupply = _totalSupplyItems.mul(10**_decimals);
-        balances[msg.sender] = totalSupply; 
+        balances[bridgeAddress] = totalSupply;
     }
 
     function setTreasury(address _treasury) public onlyOwner {
