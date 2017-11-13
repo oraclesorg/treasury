@@ -6,13 +6,13 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./Treasury.sol";
 
 
-contract TestToken is StandardToken, Ownable {
+contract OraclesToken is StandardToken, Ownable {
     using SafeMath for uint256;
 
     Treasury public treasury = Treasury(0x0);
     uint256 public decimals = 0;
 
-    function TestToken(uint256 _totalSupplyItems, uint256 _decimals) public {
+    function OraclesToken(uint256 _totalSupplyItems, uint256 _decimals) public {
         decimals = _decimals;
         totalSupply = _totalSupplyItems.mul(10**_decimals);
         balances[msg.sender] = totalSupply; 
