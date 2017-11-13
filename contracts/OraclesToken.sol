@@ -26,19 +26,20 @@ contract OraclesToken is StandardToken, Ownable {
         treasury = Treasury(_treasury);
     }
 
-    modifier treasuryIsSet() {
-        require(address(treasury) != 0x0);
-        _;
+    function treasuryIsSet() public returns (bool) {
+        return address(treasury) != 0x0;
     }
 
-    function transfer(address _to, uint256 _tokenAmount) public treasuryIsSet returns (bool) {
+    function transfer(address _to, uint256 _tokenAmount) public returns (bool) {
+        require(treasuryIsSet());
         super.transfer(_to, _tokenAmount);
         if (_to == address(treasury)) {
             treasury.tokenDepositEvent(msg.sender, _tokenAmount);
         }
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public treasuryIsSet returns (bool) {
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+        require(treasuryIsSet());
         super.transferFrom(_from, _to, _value);
         if (_to == address(treasury)) {
             // TODO FIXME
