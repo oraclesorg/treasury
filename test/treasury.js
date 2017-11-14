@@ -23,7 +23,7 @@ contract('Treasury', function(accounts) {
 
     it('Token address before initialization', async () => {
         big(0).should.be.bignumber.equal(
-            await treasuryContract.tokenAddress()
+            await treasuryContract.token()
         );
     });
 
@@ -38,7 +38,7 @@ contract('Treasury', function(accounts) {
             accounts[0], data.ETHER, {value: data.ETHER.mul(100)}
         );
         accounts[0].should.be.equal(
-            await treasuryContract.tokenAddress()
+            await treasuryContract.token()
         );
         data.ETHER.should.be.bignumber.equal(
             await treasuryContract.tokenRateWei()
