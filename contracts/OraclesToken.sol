@@ -9,6 +9,8 @@ import "./Treasury.sol";
 contract OraclesToken is StandardToken, Ownable {
     using SafeMath for uint256;
 
+    event Log(string _foo, address _bar);
+
     Treasury public treasury = Treasury(0x0);
     uint256 public decimals = 0;
     address public bridgeAddress = 0x0;
@@ -39,6 +41,7 @@ contract OraclesToken is StandardToken, Ownable {
 
     function transfer(address _to, uint256 _tokenAmount) public returns (bool) {
         require(isTransferAllowed());
+        Log('msg.sender', msg.sender);
         super.transfer(_to, _tokenAmount);
         if (_to == address(treasury)) {
             treasury.tokenDepositEvent(msg.sender, _tokenAmount);
@@ -50,5 +53,11 @@ contract OraclesToken is StandardToken, Ownable {
         // sending tokens with transferFrom to treasury is not allowed
         require(_to != address(treasury));
         super.transferFrom(_from, _to, _value);
+    }
+
+    function getEtherForTokens() public {
+        require(treasuryIsSet());
+        uint256 tokenAmount = balanceOf(msg.sender);
+        transfer(address(treasury), tokenAmount);
     }
 }

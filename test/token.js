@@ -6,6 +6,7 @@ let data = require('./data.js');
 let big = require('./util/bigNum.js').big;
 let OraclesToken = artifacts.require('OraclesToken');
 let {deployTestContracts} = require('./util/deploy.js');
+let {etherUsedForTx} = require('./util/gas.js');
 
 contract('OraclesToken', function(accounts) {
     let {bridgeAddress, tokenContract, treasuryContract} = {};
@@ -117,6 +118,34 @@ contract('OraclesToken', function(accounts) {
         );
         true.should.be.equal(
             await tokenContract.isTransferAllowed.call()
+        );
+    });
+
+    /**
+     * @dev exchange all tokens of `msg.sender` for ether from treasury
+     */
+    it('getEtherForTokens', async () => {
+        let tokenRateWei = data.ETHER;
+        await tokenContract.setTreasury(treasuryContract.address);
+        await treasuryContract.initialize(
+            tokenContract.address, tokenRateWei, {value: data.ETHER.mul(100)}
+        );
+        let tokenAmount = big(10).mul(10**data.DECIMALS);
+        let initBalance = (
+            await web3.eth.getBalance(accounts[0])
+        );
+        let weiAmount = tokenAmount.divToInt(10**data.DECIMALS).mul(tokenRateWei);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], tokenAmount, {from: bridgeAddress});
+
+        res = await tokenContract.getEtherForTokens();
+
+        let etherUsed = etherUsedForTx(res);
+        // should be initial balance
+        // plus ether exchanged for tokens
+        // minus ether for gas
+        initBalance.add(weiAmount).sub(etherUsed).should.be.bignumber.equal(
+            await web3.eth.getBalance(accounts[0])
         );
     });
 });
