@@ -81,6 +81,15 @@ contract('OraclesToken', function(accounts) {
         );
     });
 
+    it('transferFrom fails if treasury is set AND recipient is treasury', async () => {
+        await tokenContract.setTreasury(treasuryContract.address);
+        // put some tokens on common accounts[0] balance using bridge account
+        await tokenContract.transfer(accounts[0], 100, {from: bridgeAddress});
+        await tokenContract.approve(accounts[1], 100);
+        await tokenContract.transferFrom(accounts[0], treasuryContract.address, 100, {from: accounts[1]})
+            .should.be.rejectedWith(': revert');
+    });
+
     it('transfer works if treasury is NOT set and msg.sender is bridge', async () => {
         await tokenContract.transfer(accounts[1], 100, {from: bridgeAddress});
         100..should.be.bignumber.equal(
